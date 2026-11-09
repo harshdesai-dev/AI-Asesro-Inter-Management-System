@@ -19,9 +19,9 @@ export function InternDashboard({ name, internCode, position, attendanceCount, t
         <div className="workspace-label">MY WORKSPACE</div>
         <nav className="side-nav">
           <Link className="nav-item active" href="/intern"><CalendarDays size={18}/> Dashboard</Link>
-          <Link className="nav-item" href="/api/v1/me/tasks"><CheckSquare size={18}/> My Tasks</Link>
-          <Link className="nav-item" href="/api/v1/me/attendance"><CalendarCheck size={18}/> My Attendance</Link>
-          <Link className="nav-item" href="/api/v1/me/meetings"><Video size={18}/> My Meetings</Link>
+          <Link className="nav-item" href="/intern/tasks"><CheckSquare size={18}/> My Tasks</Link>
+          <Link className="nav-item" href="/intern/attendance"><CalendarCheck size={18}/> My Attendance</Link>
+          <Link className="nav-item" href="/intern/meetings"><Video size={18}/> My Meetings</Link>
         </nav>
         <div className="intern-profile"><div className="avatar">{name.split(" ").map((part) => part[0]).join("").slice(0,2)}</div><div><strong>{name}</strong><span>{position}</span></div></div>
         <form action="/api/v1/auth/logout" method="post"><button className="logout"><LogOut size={17}/> Sign out</button></form>
