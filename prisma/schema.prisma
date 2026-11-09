@@ -7,16 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {\n  ADMIN\n  INTERN\n}
-enum UserStatus {\n  ACTIVE\n  INACTIVE\n}
-enum TaskStatus {\n  DRAFT\n  ASSIGNED\n  IN_PROGRESS\n  SUBMITTED\n  REVIEWED\n  CANCELLED\n}
-enum AssignmentType {\n  INDIVIDUAL\n  TEAM\n}
-enum SubmissionType {\n  INDIVIDUAL\n  TEAM\n}
-enum SubmissionReviewStatus {\n  PENDING\n  APPROVED\n  NEEDS_CHANGES\n}
-enum AttendanceStatus {\n  PRESENT\n  ABSENT\n  LATE\n  HALF_DAY\n}
-enum MeetingType {\n  GENERAL\n  TEAM\n  INDIVIDUAL\n}
-enum MeetingStatus {\n  SCHEDULED\n  COMPLETED\n  CANCELLED\n}
-enum MeetingAttendanceStatus {\n  PRESENT\n  ABSENT\n  LATE\n}
+enum UserRole {
+  ADMIN
+  INTERN
+}
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+enum TaskStatus {
+  DRAFT
+  ASSIGNED
+  IN_PROGRESS
+  SUBMITTED
+  REVIEWED
+  CANCELLED
+}
+enum AssignmentType {
+  INDIVIDUAL
+  TEAM
+}
+enum SubmissionType {
+  INDIVIDUAL
+  TEAM
+}
+enum SubmissionReviewStatus {
+  PENDING
+  APPROVED
+  NEEDS_CHANGES
+}
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+}
+enum MeetingType {
+  GENERAL
+  TEAM
+  INDIVIDUAL
+}
+enum MeetingStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+enum MeetingAttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
 
 model User {
   id                        String               @id @default(cuid())
