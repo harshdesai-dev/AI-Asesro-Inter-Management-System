@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Activity, Bell, CalendarCheck, CalendarDays, ChartNoAxesCombined,
   CheckSquare, ChevronDown, ClipboardList, Command, Home, LogOut,
@@ -47,7 +47,7 @@ const performers = [
 export function DashboardShell() {
   const [active, setActive] = useState("Dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(true);\n\n  useEffect(() => {\n    fetch("/api/v1/dashboard").then((response) => { if (!response.ok) throw new Error("Unable to load dashboard"); return response.json(); }).then((data: DashboardData) => setDashboard(data)).catch(() => setDashboard(null));\n  }, []);
 
   return (
     <main className={dark ? "app-shell" : "app-shell light-mode"}>
@@ -71,7 +71,7 @@ export function DashboardShell() {
             <div><strong>Harsh Desai</strong><span>Administrator</span></div>
             <ChevronDown size={15} className="muted-icon"/>
           </div>
-          <button className="logout"><LogOut size={17}/> Log out</button>
+          <form action="/api/v1/auth/logout" method="post"><button className="logout"><LogOut size={17}/> Log out</button></form>
         </div>
       </aside>
 
@@ -128,7 +128,7 @@ export function DashboardShell() {
             <article className="panel activity-panel">
               <div className="panel-heading"><div><span className="eyebrow">LIVE FEED</span><h3>Recent activity</h3></div><button className="text-link">View all <span>↗</span></button></div>
               <div className="activity-list">
-                {activities.map(({ title, detail, time, tone, icon: Icon }) => <div className="activity-row" key={title}><div className={`activity-icon ${tone}`}><Icon size={17}/></div><div className="activity-copy"><strong>{title}</strong><span>{detail}</span></div><time>{time}</time></div>)}
+                {dashboard?.activities.length ? dashboard.activities.map((activity) => <div className="activity-row" key={activity.id}><div className={`activity-icon ${activity.tone}`}>{activity.kind === "submission" ? <CheckSquare size={17}/> : <CalendarCheck size={17}/>}</div><div className="activity-copy"><strong>{activity.title}</strong><span>{activity.detail}</span></div><time>{new Date(activity.time).toLocaleString("en-IN", { hour: "2-digit", minute: "2-digit" })}</time></div>) : <p className="empty-state">{dashboard ? "No recent activity yet." : "Loading recent activity..."}</p>}
               </div>
             </article>
           </section>
@@ -137,13 +137,13 @@ export function DashboardShell() {
             <article className="panel performers-panel">
               <div className="panel-heading"><div><span className="eyebrow">RECOGNITION</span><h3>Top performers</h3></div><button className="text-link">View details <span>↗</span></button></div>
               <div className="performer-list">
-                {performers.map(([rank, name, score]) => <div className="performer-row" key={rank}><span className="rank">{rank}</span><div className="avatar performer-avatar">{name.split(" ").map((n) => n[0]).join("")}</div><strong>{name}</strong><div className="progress-track"><i style={{ width: score }}/></div><b>{score}</b></div>)}
+                <p className="empty-state">Performance rankings will appear once interns have task and attendance records.</p>
               </div>
             </article>
             <article className="panel meetings-panel">
               <div className="panel-heading"><div><span className="eyebrow">YOUR CALENDAR</span><h3>Upcoming meetings</h3></div><button className="text-link">View calendar <span>↗</span></button></div>
               <div className="meeting-list">
-                {meetings.map((meeting) => <div className="meeting-row" key={meeting.title}><div className="meeting-date"><strong>{meeting.day}</strong><span>{meeting.month}</span></div><div className="meeting-copy"><strong>{meeting.title}</strong><span>{meeting.detail} · {meeting.people}</span></div><span className="status-pill">Upcoming</span></div>)}
+                {dashboard?.upcomingMeetings.length ? dashboard.upcomingMeetings.map((meeting) => <div className="meeting-row" key={meeting.id}><div className="meeting-date"><strong>{meeting.day}</strong><span>{meeting.month}</span></div><div className="meeting-copy"><strong>{meeting.title}</strong><span>{meeting.detail} · {meeting.people}</span></div><span className="status-pill">Upcoming</span></div>) : <p className="empty-state">{dashboard ? "No upcoming meetings scheduled." : "Loading meetings..."}</p>}
               </div>
             </article>
           </section>
