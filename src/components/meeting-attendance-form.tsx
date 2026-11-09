@@ -11,6 +11,7 @@ export function MeetingAttendanceForm({ meetingId, participants, cancelled }: { 
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (participants.some((person) => statuses[person.id] === "UNMARKED")) { setMessage("Choose an attendance status for every participant."); return; }
     setBusy(true);
     setMessage("");
     try {
