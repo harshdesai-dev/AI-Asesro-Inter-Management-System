@@ -36,7 +36,9 @@ export async function POST(request: Request) {
   const team = await prisma.$transaction(async (tx) => {
     const activeInterns = await tx.user.count({ where: { id: { in: ids }, role: UserRole.INTERN, status: "ACTIVE" } });
     if (activeInterns !== ids.length) throw new Error("One or more selected interns are invalid or inactive.");
-    const existingMembership = await tx.teamMember.findFirst({ where: { internId: { in: ids }, leftAt: null }, select: { internId: true } });\n    if (existingMembership) throw new Error("Each intern can belong to only one active team.");\n    return tx.team.create({
+    const existingMembership = await tx.teamMember.findFirst({ where: { internId: { in: ids }, leftAt: null }, select: { internId: true } });
+    if (existingMembership) throw new Error("Each intern can belong to only one active team.");
+    return tx.team.create({
       data: {
         name: parsed.data.name,
         description: parsed.data.description || null,
