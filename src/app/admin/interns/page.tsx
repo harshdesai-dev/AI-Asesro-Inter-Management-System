@@ -3,6 +3,7 @@ import { UserRole } from "@prisma/client";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AdminRecords } from "@/components/admin-records";
+import { AdminCreateForm } from "@/components/admin-create-form";
 
 export default async function AdminInternsPage() {
   const session = await getSession();
@@ -13,5 +14,5 @@ export default async function AdminInternsPage() {
     include: { teamMemberships: { where: { leftAt: null }, include: { team: { select: { name: true } } } } },
     orderBy: { createdAt: "desc" },
   });
-  return <AdminRecords title="Intern management" description="View and manage the people in your internship program." records={interns.map((intern) => ({ id: intern.id, primary: intern.name, secondary: intern.email, status: intern.status, extra: [intern.internCode, intern.position, intern.teamMemberships[0]?.team.name].filter(Boolean).join(" · ") }))} emptyText="No interns have been added yet." />;
+  return <><AdminCreateForm kind="intern"/><AdminRecords title="Intern management" description="View and manage the people in your internship program." records={interns.map((intern) => ({ id: intern.id, primary: intern.name, secondary: intern.email, status: intern.status, extra: [intern.internCode, intern.position, intern.teamMemberships[0]?.team.name].filter(Boolean).join(" · ") }))} emptyText="No interns have been added yet."/></>;
 }
