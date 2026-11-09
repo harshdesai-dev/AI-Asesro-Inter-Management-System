@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Bell, CalendarCheck, CalendarDays, ChartNoAxesCombined, CheckSquare,
   ChevronDown, ClipboardList, Command, Home, LogOut, Menu, Moon, Search,
-  Settings, Sun, Users, UsersRound, Video,
+  Sun, Users, UsersRound, Video,
 } from "lucide-react";
 
 type DashboardData = {
@@ -14,13 +14,13 @@ type DashboardData = {
 };
 
 const navigation = [
-  { label: "Dashboard", icon: Home },
-  { label: "Intern Management", icon: Users },
-  { label: "Team Management", icon: UsersRound },
-  { label: "Task Management", icon: ClipboardList },
-  { label: "Attendance", icon: CalendarCheck },
-  { label: "Meeting Management", icon: CalendarDays },
-  { label: "Performance", icon: ChartNoAxesCombined },
+  { label: "Dashboard", icon: Home, href: "/" },
+  { label: "Intern Management", icon: Users, href: "/admin/interns" },
+  { label: "Team Management", icon: UsersRound, href: "/admin/teams" },
+  { label: "Task Management", icon: ClipboardList, href: "/admin/tasks" },
+  { label: "Attendance", icon: CalendarCheck, href: "/admin/attendance" },
+  { label: "Meeting Management", icon: CalendarDays, href: "/admin/meetings" },
+  { label: "Performance", icon: ChartNoAxesCombined, href: "/admin/performance" },
 ];
 
 const metricDefinitions = [
@@ -69,14 +69,14 @@ export function DashboardShell() {
         </div>
         <div className="workspace-label">WORKSPACE</div>
         <nav className="side-nav" aria-label="Main navigation">
-          {navigation.map(({ label, icon: Icon }) => (
-            <button key={label} className={`nav-item ${active === label ? "active" : ""}`} onClick={() => { setActive(label); setMenuOpen(false); }}>
+          {navigation.map(({ label, icon: Icon, href }) => (
+            <button key={label} className={`nav-item ${active === label ? "active" : ""}`} onClick={() => { setActive(label); setMenuOpen(false); window.location.assign(href); }}>
               <Icon size={18} strokeWidth={1.8}/><span>{label}</span>
             </button>
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <button className={`nav-item ${active === "Settings" ? "active" : ""}`} onClick={() => setActive("Settings")}><Settings size={18}/><span>Settings</span></button>
+          
           <div className="profile-mini"><div className="avatar">A</div><div><strong>Administrator</strong><span>AI ASESRO</span></div><ChevronDown size={15} className="muted-icon"/></div>
           <form action="/api/v1/auth/logout" method="post"><button className="logout"><LogOut size={17}/> Log out</button></form>
         </div>
