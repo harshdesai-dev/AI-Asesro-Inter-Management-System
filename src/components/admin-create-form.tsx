@@ -7,7 +7,7 @@ type PersonOption = { id: string; name: string; internCode?: string | null };
 type TeamOption = { id: string; name: string };
 
 type Props = {
-  kind: "intern" | "team" | "task" | "meeting";
+  kind: "intern" | "team" | "task" | "meeting" | "attendance";
   interns?: PersonOption[];
   teams?: TeamOption[];
 };
@@ -17,11 +17,11 @@ export function AdminCreateForm({ kind, interns = [], teams = [] }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedInterns, setSelectedInterns] = useState<string[]>([]);
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);\n  const [attendanceStatuses, setAttendanceStatuses] = useState<Record<string, string>>({});
   const [assignmentType, setAssignmentType] = useState<"INDIVIDUAL" | "TEAM">("INDIVIDUAL");
 
-  const titles = { intern: "Add intern", team: "Create team", task: "Assign a task", meeting: "Schedule meeting" };
-  const endpoint = { intern: "/api/v1/interns", team: "/api/v1/teams", task: "/api/v1/tasks", meeting: "/api/v1/meetings" };
+  const titles = { intern: "Add intern", team: "Create team", task: "Assign a task", meeting: "Schedule meeting", attendance: "Mark attendance" };
+  const endpoint = { intern: "/api/v1/interns", team: "/api/v1/teams", task: "/api/v1/tasks", meeting: "/api/v1/meetings", attendance: "/api/v1/attendance" };
 
   function toggle(list: string[], setList: (value: string[]) => void, id: string) {
     setList(list.includes(id) ? list.filter((item) => item !== id) : [...list, id]);
@@ -95,7 +95,12 @@ export function AdminCreateForm({ kind, interns = [], teams = [] }: Props) {
           <p className="form-hint">Choose the interns who should receive this meeting invitation.</p>
           <div className="option-grid">{interns.map((intern) => <label className="option-check" key={intern.id}><input type="checkbox" checked={selectedInterns.includes(intern.id)} onChange={() => toggle(selectedInterns,setSelectedInterns,intern.id)}/>{intern.name}</label>)}</div>
         </>}
-        {message && <p className="form-message" role="status">{message}</p>}
+        {kind === "attendance" && <>
+          <label>Working date<input name="workDate" type="date" defaultValue={new Date().toLocaleDateString("en-CA")} required/></label>
+          <p className="form-hint">Select interns and choose their individual status. This is working-day attendance, separate from meeting attendance.</p>
+          <div className="attendance-mark-list">{interns.map((intern) => <div className="attendance-mark-row" key={intern.id}><label className="option-check"><input type="checkbox" checked={selectedInterns.includes(intern.id)} onChange={() => toggle(selectedInterns,setSelectedInterns,intern.id)}/>{intern.name}</label><select aria-label={`Attendance for ${intern.name}`} value={attendanceStatuses[intern.id] ?? "PRESENT"} onChange={(event) => setAttendanceStatuses((current) => ({ ...current, [intern.id]: event.target.value }))}><option value="PRESENT">Present</option><option value="ABSENT">Absent</option><option value="LATE">Late</option><option value="HALF_DAY">Half day</option></select></div>)}</div>
+        </>}
+        {message && <p className="form-message" role="status">{message}</p>
         <div className="form-actions"><button className="admin-create-submit" disabled={busy}>{busy ? "Saving..." : "Save"}</button></div>
       </form>}
     </section>
