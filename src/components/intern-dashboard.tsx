@@ -24,7 +24,7 @@ export function InternDashboard({ name, internCode, position, attendanceCount, t
           <Link className="nav-item" href="/api/v1/me/meetings"><Video size={18}/> My Meetings</Link>
         </nav>
         <div className="intern-profile"><div className="avatar">{name.split(" ").map((part) => part[0]).join("").slice(0,2)}</div><div><strong>{name}</strong><span>{position}</span></div></div>
-        <form action="/api/v1/auth/logout" method="post"><button className="logout" formAction="/login"><LogOut size={17}/> Sign out</button></form>
+        <form action="/api/v1/auth/logout" method="post"><button className="logout"><LogOut size={17}/> Sign out</button></form>
       </aside>
       <section className="intern-main">
         <header className="intern-topbar"><span className="eyebrow">INTERN WORKSPACE / OVERVIEW</span><span className="intern-id">{internCode}</span></header>
