@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/internhub
+      - run: npm run typecheck
+      - run: npm run lint
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/internhub
+          AUTH_SECRET: ci-only-secret-value-that-is-at-least-32-characters
+      - run: npm run build
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/internhub
+          AUTH_SECRET: ci-only-secret-value-that-is-at-least-32-characters
