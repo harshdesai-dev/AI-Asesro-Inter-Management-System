@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { UserRole, UserStatus } from "@prisma/client";\nimport { prisma } from "@/lib/prisma";
+import { UserRole, UserStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 const COOKIE_NAME = "internhub_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 12;
@@ -42,7 +43,9 @@ export async function getSession() {
   try {
     const { payload } = await jwtVerify(token, getSecret());
     if (!payload.sub || (payload.role !== "ADMIN" && payload.role !== "INTERN")) return null;
-    const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { role: true, status: true } });\n    if (!user || user.status !== UserStatus.ACTIVE || user.role !== payload.role) return null;\n    return { userId: payload.sub, role: user.role };
+    const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { role: true, status: true } });
+    if (!user || user.status !== UserStatus.ACTIVE || user.role !== payload.role) return null;
+    return { userId: payload.sub, role: user.role };
   } catch {
     return null;
   }
