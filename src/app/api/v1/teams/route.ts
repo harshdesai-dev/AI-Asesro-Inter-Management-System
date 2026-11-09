@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   const team = await prisma.$transaction(async (tx) => {
     const activeInterns = await tx.user.count({ where: { id: { in: ids }, role: UserRole.INTERN, status: "ACTIVE" } });
     if (activeInterns !== ids.length) throw new Error("One or more selected interns are invalid or inactive.");
-    return tx.team.create({
+    const existingMembership = await tx.teamMember.findFirst({ where: { internId: { in: ids }, leftAt: null }, select: { internId: true } });\n    if (existingMembership) throw new Error("Each intern can belong to only one active team.");\n    return tx.team.create({
       data: {
         name: parsed.data.name,
         description: parsed.data.description || null,
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
       include: { members: { include: { intern: { select: { id: true, name: true, email: true } } } } },
     });
   }).catch((error) => {
-    if (error instanceof Error && error.message.includes("selected interns")) return null;
+    if (error instanceof Error && (error.message.includes("selected interns") || error.message.includes("only one active team"))) return null;
     throw error;
   });
-  if (!team) return NextResponse.json({ error: "One or more selected interns are invalid or inactive." }, { status: 400 });
+  if (!team) return NextResponse.json({ error: "Check intern eligibility: each intern must be active and belong to no other active team." }, { status: 400 });
   return NextResponse.json({ team }, { status: 201 });
 }
